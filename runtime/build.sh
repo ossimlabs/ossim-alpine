@@ -1,4 +1,4 @@
 #!/bin/sh
 
-docker build -t ossim-runtime-centos-minimal:local . 
+docker build -t ossim-runtime-alpine-minimal:local . 
 
