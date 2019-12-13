@@ -12,8 +12,8 @@ RUN apk add --update tiff jpeg libpng sqlite-libs libstdc++ curl ffmpeg unzip zi
 #     chmod 777 $HOME/*.sh 
 # USER 1001
 
-ENV SPRING_CLOUD_CONFIG_ENABLED=true \
-    SPRING_CLOUD_DISCOVERY_ENABLED=true \
+ENV SPRING_CLOUD_CONFIG_ENABLED=false \
+    SPRING_CLOUD_DISCOVERY_ENABLED=false \
     OSSIM_DATA=/data \
     OSSIM_INSTALL_PREFIX=/usr/local \
     OSSIM_PREFS_FILE=/usr/local/share/ossim/ossim-preferences-template \
