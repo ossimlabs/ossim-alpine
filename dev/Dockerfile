@@ -2,6 +2,8 @@ FROM alpine:latest
 ENV OSSIM_DEV_HOME=/work \
     OSSIM_HOME=/work/ossim \
     OSSIM_BUILD_DIR=/work/build \
+    OSSIM_VERSION=1.9.0 \
+    OSSIM_VERSION_TAG=SNAPSHOT \
     REPOSITORY_MANAGER_URL=https://nexus.ossim.io/repository \
     OSSIM_PREFS_FILE=/usr/local/share/ossim/ossim-site-preferences \
     OSSIM_INSTALL_PREFIX=/usr/local \
