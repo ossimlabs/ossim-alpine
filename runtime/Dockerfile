@@ -22,9 +22,10 @@ ENV SPRING_CLOUD_CONFIG_ENABLED=false \
 
 
     
-# WORKDIR $HOME
+WORKDIR /omar-services
 # EXPOSE 8080
 #COPY *.jar $HOME/
+COPY run-java.sh .
 # ADD ossim-dist.tgz /
 #CMD ["/bin/sh", "/home/omar/run.sh"]
 CMD '/bin/bash'
