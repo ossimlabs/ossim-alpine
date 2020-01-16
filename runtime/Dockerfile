@@ -1,8 +1,9 @@
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM alpine:latest
+#FROM adoptopenjdk/openjdk8:alpine-slim
 # Install lots of fonts
 #ENV LANG en_GB.UTF-8
 #RUN apk add --update ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family && rm -rf /var/cache/apk/*
-RUN apk add --update tiff jpeg libpng sqlite-libs libstdc++ curl ffmpeg unzip zip  bash \
+RUN apk add --update tiff jpeg libpng sqlite-libs libstdc++ curl ffmpeg unzip zip  bash openjdk8 \
     && rm -rf /var/cache/apk/*
 # ENV HOME /home/omar
 # # RUN adduser -D -h $HOME -s /sbin/nologin -u 1001 omar
@@ -21,6 +22,7 @@ ENV SPRING_CLOUD_CONFIG_ENABLED=false \
     PATH=/usr/local/bin:$PATH 
 
 
+ADD ./ossim-dist.tgz /usr/local
     
 WORKDIR /omar-services
 # EXPOSE 8080
