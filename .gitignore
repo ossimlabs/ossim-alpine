@@ -1,2 +1,4 @@
 work/
 dist/
+.DS_Store
+runtime/ossim-dist.tgz
