@@ -1,4 +1,5 @@
-FROM alpine:latest
+#FROM alpine:latest
+FROM quay.io/radiantsolutions/alpine:latest
 ENV OSSIM_DEV_HOME=/work \
     OSSIM_HOME=/work/ossim \
     OSSIM_BUILD_DIR=/work/build \
