@@ -20,10 +20,10 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
                 openjdk8 apache-ant \    
     && curl -s "https://get.sdkman.io" | bash \
     && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
-        yes | sdk install groovy $GROOVY_VERSION && \
-        yes | sdk install grails $GRAILS_VERSION && \
-        yes | sdk install gradle $GRADLE_VERSION && \
-        yes | sdk install maven $MAVEN_VERSION && \
+        yes | sdk install groovy 2.4.17 && \
+        yes | sdk install grails 4.0.1 && \
+        yes | sdk install gradle 6.0 && \
+        yes | sdk install maven 3.6.3 && \
         rm -rf $HOME/.sdkman/archives/* && \
         rm -rf $HOME/.sdkman/tmp/*" \                    
     # && adduser -D -s /bin/bash omar \
