@@ -59,7 +59,8 @@ node("${BUILD_NODE}"){
                 sh "docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} ${REGISTRY_URL}"
             }            
             dir("${env.WORKSPACE}/dev"){
-                sh "${env.WORKSPACE}/dev/run-docker.sh /scripts/build-cpp.sh"
+                def foo = '/scripts/build-cpp.sh'
+                sh "${env.WORKSPACE}/dev/run-docker.sh ${foo}"
             }
         }
     }
