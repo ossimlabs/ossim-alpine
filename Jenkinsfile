@@ -31,7 +31,15 @@ node("${BUILD_NODE}"){
     }
 
     stage ("Build Dev Image") {
-        withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
+        withCredentials([[$class: 'UsernamePasswordMultiBinding',
+                           credentialsId: 'dockerCredentials',
+                           usernameVariable: 'DOCKER_REGISTRY_USERNAME',
+                           passwordVariable: 'DOCKER_REGISTRY_PASSWORD']])               
+                           
+            if(DOCKER_REGISTRY_USERNAME&&DOCKER_REGISTRY_PASSWORD)
+            {
+                sh "docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} ${REGISTRY_URL}"
+            }            
             dir("${env.WORKSPACE}/dev"){
                 sh "./build-docker.sh"
             }
