@@ -60,7 +60,7 @@ node("${BUILD_NODE}"){
             }            
             dir("${env.WORKSPACE}/dev"){
                 def foo = '/scripts/build-cpp.sh'
-                sh "${env.WORKSPACE}/dev/run-docker.sh ${foo}"
+                sh "./run-docker.sh ${foo}"
             }
         }
     }
