@@ -40,15 +40,19 @@ node("${BUILD_NODE}"){
 
     stage ("Build CPP")
     {
-        dir("${env.WORKSPACE}/dev"){
-            sh "./run-docker.sh /scripts/build-cpp.sh"
+        withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
+            dir("${env.WORKSPACE}/dev"){
+                sh "./run-docker.sh /scripts/build-cpp.sh"
+            }
         }
     }
 
     stage ("Build Runtime Image")
     {
-        dir("${env.WORKSPACE}/runtime"){
-            sh "./build-docker.sh"
+        withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
+            dir("${env.WORKSPACE}/runtime"){
+                sh "./build-docker.sh"
+            }
         }
     }
 
