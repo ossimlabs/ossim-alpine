@@ -31,29 +31,25 @@ node("${BUILD_NODE}"){
     }
 
     stage ("Build Dev Image") {
-        steps {
-          dir('dev'){
-            sh "./build-docker.sh"
-          }
+        withCredentials([string(credentialsId: 'o2-artifact-project', variable: 'o2ArtifactProject')]) {
+            dir("${env.WORKSPACE}/dev"){
+                sh "./build-docker.sh"
+            }
         } 
     }
 
     stage ("Build CPP")
     {
-        steps {
-          dir('dev'){
+        dir("${env.WORKSPACE}/dev"){
             sh "./run-docker.sh /scripts/build-cpp.sh"
-          }
-        } 
+        }
     }
 
     stage ("Build Runtime Image")
     {
-        steps {
-          dir('runtime'){
+        dir("${env.WORKSPACE}/runtime"){
             sh "./build-docker.sh"
-          }
-        } 
+        }
     }
 
 
