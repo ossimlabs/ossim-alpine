@@ -1,6 +1,7 @@
 properties([
     parameters ([
         string(name: 'BUILD_NODE', defaultValue: 'omar-build', description: 'The build node to run on'),
+        string(name: 'REGISTRY_URL', defaultValue: 'quay.io/radiantsolutions', description: 'REGISTRY_URL to push to'),
         booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
     ]),
     pipelineTriggers([
