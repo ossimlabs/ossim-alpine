@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-for x in build-proj.sh build-geotiff.sh build-geos.sh build-kakadu.sh build-gdal.sh build-ossm.sh build-joms.sh; do
+for x in build-proj.sh build-geotiff.sh build-geos.sh build-kakadu.sh build-gdal.sh build-ossim.sh build-joms.sh; do
   /scripts/$x
 done
 
