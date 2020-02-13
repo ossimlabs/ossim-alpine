@@ -47,6 +47,13 @@ node("${BUILD_NODE}"){
         } 
     }
 
+    stage ("Checkout Source Code") {
+    {                          
+        dir("${env.WORKSPACE}/dev"){
+            sh "./checkout-src.sh"
+        }
+    }    
+
     stage ("Build CPP")
     {
         withCredentials([[$class: 'UsernamePasswordMultiBinding',
@@ -59,7 +66,7 @@ node("${BUILD_NODE}"){
                 sh "docker login -u ${DOCKER_REGISTRY_USERNAME} -p ${DOCKER_REGISTRY_PASSWORD} ${REGISTRY_URL}"
             }            
             dir("${env.WORKSPACE}/dev"){
-                def foo = '/scripts/build-cpp.sh'
+                def foo = '/scripts/build-src.sh'
                 sh "./run-docker.sh ${foo}"
             }
         }
