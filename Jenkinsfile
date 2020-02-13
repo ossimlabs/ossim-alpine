@@ -47,7 +47,7 @@ node("${BUILD_NODE}"){
         } 
     }
 
-    stage ("Checkout Source Code") {
+    stage ("Checkout Source Code") 
     {                          
         dir("${env.WORKSPACE}/dev"){
             sh "./checkout-src.sh"
