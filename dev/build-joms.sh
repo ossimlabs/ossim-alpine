@@ -6,6 +6,10 @@ if [ ! -d local.properties ] ; then
     cp local.properties.template local.properties
 fi
 
+if [ -z "${GROOVY_HOME}"] ; then
+    export GROOVY_HOME=/root/.sdkman/candidates/groovy/current
+fi 
+
 ant mvn-install
 
 # Hack to fix linking on alpine

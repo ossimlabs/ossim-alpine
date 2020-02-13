@@ -13,6 +13,9 @@ properties([
 ])
 
 node("${BUILD_NODE}"){
+   DOCKER_TAG="latest"
+   if(BRANCH_NAME == "master") DOCKER_TAG="master"
+   else if(BRANCH_NAME != "dev" ) DOCKER_TAG=BRANCH_NAME
 
     stage("Checkout branch $BRANCH_NAME")
     {
@@ -82,20 +85,30 @@ node("${BUILD_NODE}"){
     }
 
 
-    // stage ("Publish Docker App")
-    // {
-    //     withCredentials([[$class: 'UsernamePasswordMultiBinding',
-    //                     credentialsId: 'dockerCredentials',
-    //                     usernameVariable: 'DOCKER_REGISTRY_USERNAME',
-    //                     passwordVariable: 'DOCKER_REGISTRY_PASSWORD']])
-    //     {
-    //         // Run all tasks on the app. This includes pushing to OpenShift and S3.
-    //         sh """
-    //         ./gradlew pushDockerImage \
-    //             -PossimMavenProxy=${OSSIM_MAVEN_PROXY}
-    //         """
-    //     }
-    // }
+    stage ("Publish Docker Images")
+    {
+        withCredentials([[$class: 'UsernamePasswordMultiBinding',
+                        credentialsId: 'dockerCredentials',
+                        usernameVariable: 'DOCKER_REGISTRY_USERNAME',
+                        passwordVariable: 'DOCKER_REGISTRY_PASSWORD']])
+        {
+            sh """
+            docker tag ossim-dev-alpine-minimal:local ${REGISTRY_URL}/ossim-dev-alpine-minimal:${DOCKER_TAG}
+            """
+
+            sh """
+            docker push ${REGISTRY_URL}/ossim-dev-alpine-minimal:${DOCKER_TAG}
+            """
+
+            sh """
+            docker tag ossim-runtime-alpine-minimal:local ${REGISTRY_URL}/ossim-runtime-alpine-minimal:${DOCKER_TAG}
+            """
+
+            sh """
+            docker push ${REGISTRY_URL}/ossim-runtime-alpine-minimal:${DOCKER_TAG}
+            """
+        }
+    }
     
     // try {
     //     stage ("OpenShift Tag Image")
