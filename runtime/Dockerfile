@@ -1,4 +1,4 @@
-FROM nexus-docker-private-group.ossim.io/alpine:latest
+FROM nexus-docker-private-hosted.ossim.io/alpine:latest
 
 ENV SPRING_CLOUD_CONFIG_ENABLED=false \
     SPRING_CLOUD_DISCOVERY_ENABLED=false \
