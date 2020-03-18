@@ -12,6 +12,7 @@ properties([
     disableConcurrentBuilds()
 ])
 
+timeout(time: 60, unit: 'MINUTES') {
 node("${BUILD_NODE}"){
    DOCKER_TAG="latest"
    if(BRANCH_NAME == "master") DOCKER_TAG="master"
@@ -135,4 +136,5 @@ node("${BUILD_NODE}"){
         if ("${CLEAN_WORKSPACE}" == "true")
             step([$class: 'WsCleanup'])
     }
+}
 }
