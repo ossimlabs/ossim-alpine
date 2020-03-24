@@ -56,7 +56,7 @@ node("${BUILD_NODE}"){
         dir("${env.WORKSPACE}/dev"){
             sh "./checkout-src.sh"
         }
-    }    
+    }  
 
     stage ("Build CPP")
     {

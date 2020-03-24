@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ossim-oms/joms
+cd /work/ossim-oms/joms/
 
 if [ ! -d local.properties ] ; then
     cp local.properties.template local.properties
@@ -8,7 +8,7 @@ fi
 
 if [ -z "${GROOVY_HOME}"] ; then
     export GROOVY_HOME=/root/.sdkman/candidates/groovy/current
-fi 
+fi
 
 ant mvn-install
 

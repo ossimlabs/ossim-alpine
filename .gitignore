@@ -1,4 +1,6 @@
-work/
-dist/
-.DS_Store
+build-ossim/work/
+build-ossim/output/
+build-ossim/ossim-repos/
+ossim-builder/deps/
 runtime/ossim-dist.tgz
+.DS_Store

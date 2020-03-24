@@ -30,7 +30,19 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
     # && chown -R omar:omar /usr/local \
     && rm -rf /var/cache/apk/*
 
+RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && \
+    ln -s /root/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails && \
+    ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
+    ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
+
+COPY build_scripts /build_scripts
+COPY deps /deps
+WORKDIR /deps
+
+RUN /build_scripts/build-deps.sh
+
 # USER omar
 # WORKDIR /home/omar
+RUN mkdir -p /work
 WORKDIR /work
-CMD /bin/bash
+CMD /build_scripts/build-ossim.sh

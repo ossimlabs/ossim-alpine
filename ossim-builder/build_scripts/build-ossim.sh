@@ -1,5 +1,9 @@
 #!/bin/bash
+
+set -e
+
 export OSSIM_DEV_HOME=/work
+export OSSIM_DEPS_HOME=/deps
 export CMAKE_CXX_FLAGS=-DKDU_NO_THREADS
 
 pushd `dirname ${BASH_SOURCE[0]}` >/dev/null
@@ -15,7 +19,7 @@ rm -f $OSSIM_BUILD_DIR/CMakeCache.txt
 export BUILD_GEOPDF_PLUGIN=OFF 
 export BUILD_HDF5_PLUGIN=OFF
 export BUILD_OSSIM_HDF5_SUPPORT=OFF
-export KAKADU_ROOT_SRC=$OSSIM_DEV_HOME/ossim-private/kakadu/v7_7_1-01123C
+export KAKADU_ROOT_SRC=$OSSIM_DEPS_HOME/ossim-private/kakadu/v7_7_1-01123C
 export KAKADU_LIBRARY=$KAKADU_ROOT_SRC/lib/Linux-x86-64-gcc/libkdu.a
 export KAKADU_AUX_LIBRARY=$KAKADU_ROOT_SRC/lib/Linux-x86-64-gcc/libkdu_aux.a
 export BUILD_KML_PLUGIN=OFF
@@ -46,8 +50,17 @@ fi
 export CMAKE_BUILD_TYPE=Release
 export BUILD_OPENCV_PLUGIN=OFF
 export OSSIM_MAKE_JOBS=12
+
 $OSSIM_DEV_HOME/ossim/scripts/build.sh
 
 # Install it
 cd build
 make install
+
+/build_scripts/build-joms.sh
+
+for x in `find /usr/local/bin /usr/local/lib /usr/local/lib64 -type f`; do
+  strip $x || true
+done
+
+tar -cvz -C /usr/local -f /output/ossim-dist.tgz .
