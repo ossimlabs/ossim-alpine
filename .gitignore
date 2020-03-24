@@ -1,6 +1,6 @@
-build-ossim/work/
-build-ossim/output/
-build-ossim/ossim-repos/
-ossim-builder/deps/
+compile-ossim/work/
+compile-ossim/output/
+compile-ossim/ossim-repos/
+builder-image/deps/
 runtime/ossim-dist.tgz
 .DS_Store

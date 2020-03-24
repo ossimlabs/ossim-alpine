@@ -11,7 +11,7 @@ export OSSIM_VIDEO_DIR="${REPOS_DIR}/ossim-video"
 mkdir -p "${REPOS_DIR}"
 
 if [[ ! -d "${OSSIM_DIR}" ]]; then
-    git clone https://github.com/ossimlabs/ossim.git "${OSSIM_DIR}"
+    git clone https://github.com/ossimlabs/ossim.git "${OSSIM_DIR}" --single-branch --branch master
 fi
 
 if [[ ! -d "${OSSIM_PLUGINS_DIR}" ]]; then

@@ -41,6 +41,8 @@ WORKDIR /deps
 
 RUN /build_scripts/build-deps.sh
 
+RUN yes | rm -r /deps/*/.git
+
 # USER omar
 # WORKDIR /home/omar
 RUN mkdir -p /work
