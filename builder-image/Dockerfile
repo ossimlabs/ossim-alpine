@@ -1,5 +1,5 @@
 #FROM alpine:latest
-FROM nexus-docker-public-hosted.ossim.io/alpine:latest as build
+FROM nexus-docker-public-group.ossim.io/alpine:latest as build
 ENV OSSIM_DEV_HOME=/work \
     OSSIM_HOME=/work/ossim \
     OSSIM_BUILD_DIR=/work/build \

@@ -45,7 +45,7 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage ("Build Ossim")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
                 dir("compile-ossim") {
                     sh "./build.sh"
                     archiveArtifacts output/ossim-dist.tgz
@@ -55,7 +55,7 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage ("Build Runtime Image")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
                 dir("runtime") {
                     sh "./build-docker.sh"
                 }
@@ -64,7 +64,7 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage ("Publish Docker Image")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
                 sh """
                     docker tag ossim-runtime:alpine ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine
                     docker push ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine
