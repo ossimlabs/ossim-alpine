@@ -15,7 +15,7 @@ ENV OSSIM_DEV_HOME=/work \
 
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories  \
     && apk update \
-    && apk add git cmake make autoconf automake libtool g++ bash linux-headers tiff-dev jpeg-dev \
+    && apk add --update git cmake make autoconf automake libtool g++ bash linux-headers tiff-dev jpeg-dev \
                 libpng-dev swig curl-dev ffmpeg-dev sqlite sqlite-dev python3-dev curl unzip zip \
                 openjdk8 apache-ant \    
     && curl -s "https://get.sdkman.io" | bash \
