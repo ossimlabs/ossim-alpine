@@ -19,7 +19,7 @@ properties([
 timeout(time: 60, unit: 'MINUTES') {
     node("${BUILD_NODE}"){
 
-        stage("Checkout branch $BRANCH_NAME")
+        stage("Checkout")
         {
             checkout(scm)
         }
