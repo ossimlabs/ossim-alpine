@@ -1,5 +1,5 @@
 #!/bin/sh
 
-cp ../build-ossim/output/ossim-dist.tgz ./
+cp ../compile-ossim/output/ossim-dist.tgz ./
 docker build -t ossim-runtime:alpine . 
 

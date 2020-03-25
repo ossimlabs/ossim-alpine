@@ -46,14 +46,17 @@ timeout(time: 60, unit: 'MINUTES') {
         stage ("Build Ossim")
         {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: '${DOCKER_REGISTRY_PRIVATE_URL}') {
-                sh "./build.sh"
+                dir("compile-ossim") {
+                    sh "./build.sh"
+                    archiveArtifacts output/ossim-dist.tgz
+                }
             }
         }
 
         stage ("Build Runtime Image")
         {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: '${DOCKER_REGISTRY_PRIVATE_URL}') {
-                dir("runtime"){
+                dir("runtime") {
                     sh "./build-docker.sh"
                 }
             }
