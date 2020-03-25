@@ -47,6 +47,7 @@ timeout(time: 60, unit: 'MINUTES') {
         {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
                 dir("compile-ossim") {
+                    env.BUILDER_IMAGE = "${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine"
                     sh "./build.sh"
                     archiveArtifacts output/ossim-dist.tgz
                 }
