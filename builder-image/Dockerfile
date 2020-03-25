@@ -35,11 +35,11 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
-COPY build_scripts /build_scripts
+COPY build-scripts /build-scripts
 COPY deps /deps
 WORKDIR /deps
 
-RUN /build_scripts/build-deps.sh
+RUN /build-scripts/build-deps.sh
 
 RUN yes | rm -r /deps/*/.git
 
@@ -47,4 +47,4 @@ RUN yes | rm -r /deps/*/.git
 # WORKDIR /home/omar
 RUN mkdir -p /work
 WORKDIR /work
-CMD /build_scripts/build-ossim.sh
+CMD /build-scripts/build-ossim.sh

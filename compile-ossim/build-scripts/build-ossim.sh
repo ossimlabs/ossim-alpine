@@ -57,7 +57,7 @@ $OSSIM_DEV_HOME/ossim/scripts/build.sh
 cd build
 make install
 
-/build_scripts/build-joms.sh
+/build-scripts/build-joms.sh
 
 for x in `find /usr/local/bin /usr/local/lib /usr/local/lib64 -type f`; do
   strip $x || true
