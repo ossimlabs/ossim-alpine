@@ -35,35 +35,26 @@ timeout(time: 60, unit: 'MINUTES') {
             load "common-variables.groovy"
         }
 
-        stage ("Checkout Source Code") 
+        stage ("Checkout Dependencies Source Code") 
         {                          
-            dir("compile-ossim"){
-                sh "./checkout-ossim.sh"
-            }
-        }  
-
-        stage ("Build Ossim")
-        {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: '${DOCKER_REGISTRY_PRIVATE_URL}') {
-                sh "./build.sh"
+            dir("builder-image"){
+                sh "./checkout-scripts/checkout-deps.sh"
             }
         }
 
-        stage ("Build Runtime Image")
-        {
+        stage ("Create Builder Image") {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: '${DOCKER_REGISTRY_PRIVATE_URL}') {
-                dir("runtime"){
-                    sh "./build-docker.sh"
+                dir("builder-image"){
+                    sh "./build.sh"
                 }
             }
         }
 
-        stage ("Publish Docker Image")
-        {
+        stage ("Push Builder Image") {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: '${DOCKER_REGISTRY_PRIVATE_URL}') {
                 sh """
-                    docker tag ossim-runtime:alpine ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine
-                    docker push ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine
+                    docker tag ossim-runtime:alpine ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-runtime:alpine
+                    docker push ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-runtime:alpine
                 """
             }
         }
