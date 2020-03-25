@@ -1,6 +1,10 @@
 properties([
     parameters ([
         string(name: 'BUILD_NODE', defaultValue: 'omar-build', description: 'The build node to run on'),
+        string(name: 'OSSIM_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim'),
+        string(name: 'OSSIM_PLUGINS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim plugins'),
+        string(name: 'OSSIM_OMS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim oms'),
+        string(name: 'OSSIM_VIDEO_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim video'),
         string(name: 'REGISTRY_URL', defaultValue: 'nexus-docker-public-hosted.ossim.io', description: 'REGISTRY_URL to push to'),
         booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
     ]),
@@ -14,9 +18,6 @@ properties([
 
 timeout(time: 60, unit: 'MINUTES') {
     node("${BUILD_NODE}"){
-        DOCKER_TAG="latest"
-        if(BRANCH_NAME == "master") DOCKER_TAG="master"
-        else if(BRANCH_NAME != "dev" ) DOCKER_TAG=BRANCH_NAME
 
         stage("Checkout branch $BRANCH_NAME")
         {

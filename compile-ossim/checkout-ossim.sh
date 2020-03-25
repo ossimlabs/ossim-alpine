@@ -2,8 +2,6 @@
 
 set -e
 
-BRANCH="${BRANCH_NAME:=dev}"
-
 export REPOS_DIR="${PWD}/ossim-repos"
 export OSSIM_DIR="${REPOS_DIR}/ossim"
 export OSSIM_PLUGINS_DIR="${REPOS_DIR}/ossim-plugins"
