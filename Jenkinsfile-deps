@@ -1,7 +1,6 @@
 properties([
     parameters ([
         string(name: 'BUILD_NODE', defaultValue: 'omar-build', description: 'The build node to run on'),
-        string(name: 'REGISTRY_URL', defaultValue: 'nexus-docker-public-hosted.ossim.io', description: 'REGISTRY_URL to push to'),
         booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
     ]),
     pipelineTriggers([
@@ -40,7 +39,7 @@ timeout(time: 60, unit: 'MINUTES') {
         }
 
         stage ("Create Builder Image") {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
                 dir("builder-image"){
                     sh "./build.sh"
                 }
@@ -48,10 +47,10 @@ timeout(time: 60, unit: 'MINUTES') {
         }
 
         stage ("Push Builder Image") {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                 sh """
-                    docker tag ossim-builder:alpine ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine
-                    docker push ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine
+                    docker tag ossim-builder:alpine ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder:alpine
+                    docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder:alpine
                 """
             }
         }

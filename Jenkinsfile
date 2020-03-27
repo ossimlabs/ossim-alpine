@@ -5,7 +5,6 @@ properties([
         string(name: 'OSSIM_PLUGINS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim plugins'),
         string(name: 'OSSIM_OMS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim oms'),
         string(name: 'OSSIM_VIDEO_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim video'),
-        string(name: 'REGISTRY_URL', defaultValue: 'nexus-docker-public-hosted.ossim.io', description: 'REGISTRY_URL to push to'),
         booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
     ]),
     pipelineTriggers([
@@ -45,9 +44,9 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage ("Build Ossim")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
                 dir("compile-ossim") {
-                    env.BUILDER_IMAGE = "${DOCKER_REGISTRY_PRIVATE_URL}/ossim-builder:alpine"
+                    env.BUILDER_IMAGE = "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder:alpine"
                     sh "./build.sh"
                     archiveArtifacts "output/ossim-dist.tgz"
                 }
@@ -56,7 +55,7 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage ("Build Runtime Image")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
                 dir("runtime") {
                     sh "./build-docker.sh"
                 }
@@ -65,10 +64,10 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage ("Publish Docker Image")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_URL}") {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                 sh """
-                    docker tag ossim-runtime:alpine ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-runtime:alpine
-                    docker push ${DOCKER_REGISTRY_PRIVATE_URL}/ossim-runtime:alpine
+                    docker tag ossim-runtime:alpine ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime:alpine
+                    docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime:alpine
                 """
             }
         }
