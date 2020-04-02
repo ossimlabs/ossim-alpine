@@ -1,4 +1,4 @@
-FROM nexus-docker-public-hosted.ossim.io/alpine:latest
+FROM nexus-docker-public-group.ossim.io/alpine:latest
 
 ENV SPRING_CLOUD_CONFIG_ENABLED=false \
     SPRING_CLOUD_DISCOVERY_ENABLED=false \
@@ -9,17 +9,10 @@ ENV SPRING_CLOUD_CONFIG_ENABLED=false \
     PATH=/usr/local/bin:$PATH \
     HOME=/home/omar 
 
-#FROM alpine:latest
-#FROM adoptopenjdk/openjdk8:alpine-slim
-# Install lots of fonts
-#ENV LANG en_GB.UTF-8
-#RUN apk add --update ttf-dejavu ttf-droid ttf-freefont ttf-liberation ttf-ubuntu-font-family && rm -rf /var/cache/apk/*
 RUN apk add --update tiff jpeg libpng sqlite-libs libstdc++ curl ffmpeg unzip zip  bash openjdk8 \
     && rm -rf /var/cache/apk/* \
     && adduser -D -h $HOME -s /sbin/nologin -u 1001 omar \
     && chown 1001:0 -R $HOME 
-#    chmod 777 $HOME && \
-#    chmod 777 $HOME/*.sh
 
 ADD ./ossim-dist.tgz /usr/local
     
@@ -28,7 +21,5 @@ EXPOSE 8080
 USER 1001
 WORKDIR $HOME
 
-#COPY *.jar $HOME/
 COPY run-java.sh run.sh
-#CMD ["/bin/sh", "/home/omar/run.sh"]
 CMD '/bin/bash'
