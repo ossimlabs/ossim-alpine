@@ -2,5 +2,5 @@ compile-ossim/work/
 compile-ossim/output/
 compile-ossim/ossim-repos/
 builder-image/deps/
-runtime/ossim-dist.tgz
+ossim-dist-minimal-alpine.tgz
 .DS_Store
