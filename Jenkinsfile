@@ -69,7 +69,7 @@ timeout(time: 60, unit: 'MINUTES') {
         {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                 sh """
-                    docker tag ossim-builder-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
+                    docker tag ossim-runtime-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
                     docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
                 """
             }
