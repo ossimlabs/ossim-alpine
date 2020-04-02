@@ -33,6 +33,7 @@ timeout(time: 60, unit: 'MINUTES') {
             }
 
             load "common-variables.groovy"
+            env.RUNTIME_TAG = OSSIM_BRANCH
         }
 
         stage ("Checkout Source Code") 
@@ -46,8 +47,10 @@ timeout(time: 60, unit: 'MINUTES') {
         {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
                 dir("compile-ossim") {
-                    env.BUILDER_IMAGE = "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder:alpine"
-                    sh "./build.sh"
+                    sh """
+                        export BUILDER_IMAGE="${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder-minimal-alpine:$(cat ../version.txt)"
+                        ./build.sh
+                    """
                     archiveArtifacts "output/ossim-dist.tgz"
                 }
             }
@@ -66,8 +69,8 @@ timeout(time: 60, unit: 'MINUTES') {
         {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                 sh """
-                    docker tag ossim-runtime:alpine ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime:alpine
-                    docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime:alpine
+                    docker tag ossim-builder-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
+                    docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
                 """
             }
         }
