@@ -62,7 +62,7 @@ ENV OSSIM_DEV_HOME=/work \
     OSSIM_DATA=/data \
     PATH=/usr/local/bin:/usr/bin:$PATH \
     LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$PATH \
-    JAVA_HOME=/usr/lib/jvm/java
+    JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 
 WORKDIR /work
 CMD /build-scripts/build-ossim.sh
