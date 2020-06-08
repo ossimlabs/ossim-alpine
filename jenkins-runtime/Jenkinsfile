@@ -1,6 +1,10 @@
 properties([
     parameters ([
         string(name: 'BUILD_NODE', defaultValue: 'omar-build', description: 'The build node to run on'),
+        string(name: 'OSSIM_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim'),
+        string(name: 'OSSIM_PLUGINS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim plugins'),
+        string(name: 'OSSIM_OMS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim oms'),
+        string(name: 'OSSIM_VIDEO_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim video'),
         booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
     ]),
     pipelineTriggers([
@@ -11,7 +15,7 @@ properties([
     disableConcurrentBuilds()
 ])
 
-timeout(time: 90, unit: 'MINUTES') {
+timeout(time: 60, unit: 'MINUTES') {
     node("${BUILD_NODE}"){
 
         stage("Checkout")
@@ -29,28 +33,44 @@ timeout(time: 90, unit: 'MINUTES') {
             }
 
             load "common-variables.groovy"
+            env.RUNTIME_TAG = OSSIM_BRANCH
         }
 
-        stage ("Checkout Dependencies Source Code") 
+        stage ("Checkout Source Code") 
         {                          
-            dir("builder-image"){
-                sh "./checkout-scripts/checkout-deps.sh"
+            dir("compile-ossim"){
+                sh "./checkout-ossim.sh"
             }
-        }
+        }  
 
-        stage ("Create Builder Image") {
+        stage ("Build Ossim")
+        {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
-                dir("builder-image"){
-                    sh "./build.sh"
+                dir("compile-ossim") {
+                    sh """
+                        export BUILDER_IMAGE="${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder-minimal-alpine:\$(cat ../version.txt)"
+                        ./build.sh
+                    """
+                    archiveArtifacts "output/ossim-dist-minimal-alpine.tgz"
                 }
             }
         }
 
-        stage ("Push Builder Image") {
+        stage ("Build Runtime Image")
+        {
+            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
+                dir("runtime") {
+                    sh "./build-docker.sh"
+                }
+            }
+        }
+
+        stage ("Publish Docker Image")
+        {
             withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                 sh """
-                    docker tag ossim-builder-minimal-alpine:local "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-minimal-alpine:\$(cat version.txt)"
-                    docker push "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-minimal-alpine:\$(cat version.txt)"
+                    docker tag ossim-runtime-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
+                    docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
                 """
             }
         }
