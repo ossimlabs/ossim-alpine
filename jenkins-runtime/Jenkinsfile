@@ -1,11 +1,15 @@
 properties([
     parameters ([
+        string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images'),
         string(name: 'BUILD_NODE', defaultValue: 'omar-build', description: 'The build node to run on'),
         string(name: 'OSSIM_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim'),
         string(name: 'OSSIM_PLUGINS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim plugins'),
         string(name: 'OSSIM_OMS_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim oms'),
         string(name: 'OSSIM_VIDEO_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim video'),
+        string(name: 'OSSIM_DEEPCORE_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim deepcore'),
+        string(name: 'OSSIM_BUILDER_VERSION', defaultValue: '1.0.1', description: 'The version of the ossim builder to be used'),
         booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
+
     ]),
     pipelineTriggers([
             [$class: "GitHubPushTrigger"]
@@ -14,9 +18,41 @@ properties([
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
     disableConcurrentBuilds()
 ])
-
+podTemplate(
+    containers: [
+    containerTemplate(
+        name: 'git',
+        image: 'alpine/git:latest',
+        ttyEnabled: true,
+        command: 'cat',
+        envVars: [
+            envVar(key: 'HOME', value: '/root')
+        ]
+    ),
+    containerTemplate(
+      name: 'docker',
+      image: 'docker:19.03.8',
+      ttyEnabled: true,
+      command: 'cat',
+      privileged: true
+    ),
+    containerTemplate(
+      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder-minimal-alpine:${OSSIM_BUILDER_VERSION}",
+      name: 'builder',
+      command: 'cat',
+      ttyEnabled: true
+    )
+  ],
+  volumes: [
+    hostPathVolume(
+      hostPath: '/var/run/docker.sock',
+      mountPath: '/var/run/docker.sock'
+    )
+  ]
+)
+{
 timeout(time: 60, unit: 'MINUTES') {
-    node("${BUILD_NODE}"){
+    node(POD_LABEL){
 
         stage("Checkout")
         {
@@ -33,45 +69,65 @@ timeout(time: 60, unit: 'MINUTES') {
             }
 
             load "common-variables.groovy"
-            env.RUNTIME_TAG = OSSIM_BRANCH
         }
 
         stage ("Checkout Source Code") 
-        {                          
-            dir("compile-ossim"){
-                sh "./checkout-ossim.sh"
+        {  
+            container('git'){  
+                dir("compile-ossim"){
+                    dir("ossim-repos/ossim-deepcore"){
+                        git(
+                            url: 'git@github.com:Maxar-Corp/ossim-deepcore.git',
+                            credentialsId: 'ossimlabs-minion-ssh-key',
+                            branch: "master"
+                        )
+                    }
+                    sh """
+                        apk update && apk add bash
+                        ./checkout-ossim.sh
+                        cd ossim-repos/ossim-deepcore
+                        git checkout ${OSSIM_DEEPCORE_BRANCH}
+                    """
+                }
             }
         }  
 
         stage ("Build Ossim")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
-                dir("compile-ossim") {
-                    sh """
-                        export BUILDER_IMAGE="${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder-minimal-alpine:\$(cat ../version.txt)"
-                        ./build.sh
-                    """
-                    archiveArtifacts "output/ossim-dist-minimal-alpine.tgz"
-                }
+            container('builder'){
+                        sh """
+                            mkdir /output
+                            mv ./compile-ossim/ossim-repos/* /work
+                            mv ./compile-ossim/build-scripts/* /build-scripts
+                            cd /work
+                            /build-scripts/build-ossim.sh
+                            mv /output/ossim-dist-minimal-alpine.tgz ${WORKSPACE}/compile-ossim/
+                        """
+                        archiveArtifacts "compile-ossim/ossim-dist-minimal-alpine.tgz"
             }
         }
-
         stage ("Build Runtime Image")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
-                dir("runtime") {
-                    sh "./build-docker.sh"
+            container('docker'){
+                withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
+                    dir("runtime") {
+                        sh """
+                            ./build-docker.sh --network=host
+                        """
+                    }
                 }
             }
         }
 
         stage ("Publish Docker Image")
         {
-            withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
-                sh """
-                    docker tag ossim-runtime-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
-                    docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
-                """
+            container('docker'){
+                withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
+                    sh """
+                        docker tag ossim-runtime-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
+                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
+                    """
+                }
             }
         }
 
@@ -81,4 +137,5 @@ timeout(time: 60, unit: 'MINUTES') {
                 step([$class: 'WsCleanup'])
         }
     }
+}
 }
