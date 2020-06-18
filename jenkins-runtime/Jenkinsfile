@@ -37,7 +37,7 @@ podTemplate(
       privileged: true
     ),
     containerTemplate(
-      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder-minimal-alpine:${OSSIM_BUILDER_VERSION}",
+      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-builder-alpine:${OSSIM_BUILDER_VERSION}",
       name: 'builder',
       command: 'cat',
       ttyEnabled: true
@@ -124,8 +124,8 @@ timeout(time: 60, unit: 'MINUTES') {
             container('docker'){
                 withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                     sh """
-                        docker tag ossim-runtime-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
-                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-minimal-alpine:${OSSIM_BRANCH}
+                        docker tag ossim-runtime-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-alpine:${OSSIM_BRANCH}
+                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-runtime-alpine:${OSSIM_BRANCH}
                     """
                 }
             }
