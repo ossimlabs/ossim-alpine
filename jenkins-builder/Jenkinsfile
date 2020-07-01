@@ -102,8 +102,8 @@ podTemplate(
             container('docker'){                  
                 withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                     sh """
-                        docker tag ossim-builder-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-alpine:\$(cat version.txt)
-                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-alpine:\$(cat version.txt)
+                        docker tag ossim-alpine-builder:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:\$(cat version.txt)
+                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:\$(cat version.txt)
                     """
                 }
             }
