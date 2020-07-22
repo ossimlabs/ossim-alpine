@@ -18,7 +18,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
     && apk update \
     && apk add --update git cmake make autoconf automake libtool g++ bash linux-headers tiff-dev jpeg-dev \
                 libpng-dev swig curl-dev ffmpeg-dev sqlite sqlite-dev python3-dev curl unzip zip \
-                openjdk8 apache-ant \    
+                openjdk8 apache-ant tgz\    
     && curl -s "https://get.sdkman.io" | bash \
     && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
         yes | sdk install groovy 2.4.17 && \
