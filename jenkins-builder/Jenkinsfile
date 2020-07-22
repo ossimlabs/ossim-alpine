@@ -1,4 +1,3 @@
-
 properties([
     parameters ([
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images'),
@@ -15,10 +14,13 @@ properties([
 podTemplate(
     containers: [
     containerTemplate(
-        name: 'curl',
-        image: 'curlimages/curl:7.71.1',
+        name: 'git',
+        image: 'alpine/git:latest',
         ttyEnabled: true,
         command: 'cat',
+        envVars: [
+            envVar(key: 'HOME', value: '/root')
+        ]
     ),
     containerTemplate(
       name: 'docker',
@@ -57,17 +59,15 @@ podTemplate(
         }
 
         stage ("Checkout Dependencies Source Code") 
-        {   
-            container("curl"){
-                withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
-                    dir("tgz") {
-                        sh """
-                            curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
-                            curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
-                            curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geotiff.tgz -O
-                            curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-kakadu.tgz -O
-                        """
-                    }
+        {       
+            withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
+                dir("tgz") {
+                    sh """
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geotiff.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-kakadu.tgz -O
+                    """
                 }
             }
         }
