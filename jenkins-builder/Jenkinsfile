@@ -61,7 +61,7 @@ podTemplate(
         stage ("Checkout Dependencies Source Code") 
         {       
             withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
-                dir("tgz") {
+                dir("builder-image/tgz") {
                     sh """
                         curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
                         curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
