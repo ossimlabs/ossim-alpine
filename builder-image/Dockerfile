@@ -36,11 +36,10 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
-COPY build-scripts /build-scripts
-COPY deps /deps
-WORKDIR /deps
-
-RUN /build-scripts/build-deps.sh
+RUN tgz -xzvf alpine-gdal.tgz \
+    tgz -xzvf alpine-geos.tgz \
+    tgz -xzvf alpine-geotiff.tgz \
+    tgz -xzvf alpine-kakadu.tgz
 
 RUN yes | rm -r /deps/*/.git
 
@@ -65,7 +64,3 @@ ENV OSSIM_DEV_HOME=/work \
     JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 
 WORKDIR /work
-RUN tgz -xzvf alpine-gdal.tgz \
-    tgz -xzvf alpine-geos.tgz \
-    tgz -xzvf alpine-geotiff.tgz \
-    tgz -xzvf alpine-kakadu.tgz
