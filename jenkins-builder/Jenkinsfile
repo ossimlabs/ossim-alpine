@@ -61,27 +61,17 @@ podTemplate(
 
         stage ("Checkout Dependencies Source Code") 
         {       
-            
-            container('git'){
+            withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
                 dir("builder-image") {
-                    dir("deps/ossim-private"){
-                        git(
-                            url: 'git@github.com:Maxar-Corp/ossim-private.git',
-                            credentialsId: 'ossimlabs-minion-ssh-key',
-                            branch: "master"
-                        )
-                    }
-                    
                     sh """
-                        apk update && apk add bash
-                        ./checkout-scripts/checkout-deps.sh
-                        
-                        cd deps/ossim-private
-                        git checkout "${KAKADU_VERSION}"
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geotiff.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-kakadu.tgz -O
+                        ls
                     """
                 }
             }
-            
         }
 
         stage ("Create Builder Image") {
