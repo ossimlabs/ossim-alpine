@@ -15,13 +15,10 @@ properties([
 podTemplate(
     containers: [
     containerTemplate(
-        name: 'git',
-        image: 'alpine/git:latest',
+        name: 'curl',
+        image: 'curlimages/curl:7.71.1',
         ttyEnabled: true,
         command: 'cat',
-        envVars: [
-            envVar(key: 'HOME', value: '/root')
-        ]
     ),
     containerTemplate(
       name: 'docker',
@@ -61,7 +58,7 @@ podTemplate(
 
         stage ("Checkout Dependencies Source Code") 
         {   
-            container("git"){
+            container("curl"){
                 withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
                     dir("tgz") {
                         sh """
