@@ -61,7 +61,7 @@ podTemplate(
 
         stage ("Checkout Dependencies Source Code") 
         {   
-            container("docker"){
+            container("git"){
                 withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
                     dir("tgz") {
                         sh """
