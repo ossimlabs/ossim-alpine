@@ -39,7 +39,7 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
 RUN tar -xzvf alpine-gdal.tgz \
     tar -xzvf alpine-geos.tgz \
     tar -xzvf alpine-geotiff.tgz \
-    tar -xzvf alpine-kakadu.tgz \
+    #tar -xzvf alpine-kakadu.tgz
 
 
 # USER omar
