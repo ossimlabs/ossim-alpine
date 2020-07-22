@@ -18,7 +18,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
     && apk update \
     && apk add --update git cmake make autoconf automake libtool g++ bash linux-headers tiff-dev jpeg-dev \
                 libpng-dev swig curl-dev ffmpeg-dev sqlite sqlite-dev python3-dev curl unzip zip \
-                openjdk8 apache-ant tgz\    
+                openjdk8 apache-ant \    
     && curl -s "https://get.sdkman.io" | bash \
     && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && \
         yes | sdk install groovy 2.4.17 && \
@@ -36,10 +36,10 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
-RUN tgz -xzvf alpine-gdal.tgz \
-    tgz -xzvf alpine-geos.tgz \
-    tgz -xzvf alpine-geotiff.tgz \
-    tgz -xzvf alpine-kakadu.tgz
+RUN tar -xzvf alpine-gdal.tgz \
+    tar -xzvf alpine-geos.tgz \
+    tar -xzvf alpine-geotiff.tgz \
+    tar -xzvf alpine-kakadu.tgz
 
 RUN yes | rm -r /deps/*/.git
 
