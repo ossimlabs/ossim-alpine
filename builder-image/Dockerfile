@@ -13,7 +13,7 @@ ENV OSSIM_DEV_HOME=/work \
     PATH=/usr/local/bin:/usr/bin:$PATH \
     LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib64:$PATH \
     JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
-
+RUN ls -lR
 RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories  \
     && apk update \
     && apk add --update git cmake make autoconf automake libtool g++ bash linux-headers tiff-dev jpeg-dev \
@@ -35,7 +35,7 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails && \
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
-RUN ls -lR
+
 COPY /*/tgz /
 RUN tar -xzvf alpine-gdal.tgz \
     tar -xzvf alpine-geos.tgz \
