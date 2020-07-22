@@ -82,6 +82,7 @@ podTemplate(
                         sh """
                         apk update && apk add bash
                         ./build.sh --network=host
+                        ls -lR
                         """
                     }
                 }

@@ -65,4 +65,7 @@ ENV OSSIM_DEV_HOME=/work \
     JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 
 WORKDIR /work
-CMD /build-scripts/build-ossim.sh
+RUN tgz -xzvf alpine-gdal.tgz \
+    tgz -xzvf alpine-geos.tgz \
+    tgz -xzvf alpine-geotiff.tgz \
+    tgz -xzvf alpine-kakadu.tgz
