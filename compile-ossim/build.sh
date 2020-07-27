@@ -3,6 +3,7 @@
 set -e
 
 ./checkout-ossim.sh
+docker image ls
 docker run --rm -i \
 -v "${PWD}/build-scripts/build-ossim.sh:/build-scripts/build-ossim.sh" \
 -v "${PWD}/build-scripts/build-joms.sh:/build-scripts/build-joms.sh" \
