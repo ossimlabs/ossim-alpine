@@ -37,9 +37,7 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
 COPY tgz /usr/local
-RUN cd /usr/local
-RUN ls
-RUN tar -xzvf alpine-gdal.tgz
+RUN cd usr/local && tar -xzvf alpine-gdal.tgz
 RUN tar -xzvf alpine-geos.tgz 
 RUN tar -xzvf alpine-geotiff.tgz 
 RUN tar -xzvf alpine-kakadu.tgz
