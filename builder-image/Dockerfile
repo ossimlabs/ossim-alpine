@@ -36,7 +36,7 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
-COPY tgz /usr/local/
+COPY tgz /usr/local
 RUN cd /usr/local
 RUN tar -xzvf alpine-gdal.tgz
 RUN tar -xzvf alpine-geos.tgz 
