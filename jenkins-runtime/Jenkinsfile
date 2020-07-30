@@ -97,6 +97,7 @@ timeout(time: 60, unit: 'MINUTES') {
             container('builder'){
                         sh """
                             mkdir /output
+                            ls -alhR
                             mv ./compile-ossim/ossim-repos/* /work
                             mv ./compile-ossim/build-scripts/* /build-scripts
                             cd /work
