@@ -99,6 +99,7 @@ timeout(time: 60, unit: 'MINUTES') {
                             #mkdir /build-scripts
                             mkdir /output
                             mv ./compile-ossim/ossim-repos/* /work
+                            ls -alRh
                             mv ./compile-ossim/build-scripts/* /build-scripts
                             cd /work
                             /build-scripts/build-ossim.sh
