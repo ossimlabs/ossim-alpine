@@ -99,8 +99,7 @@ timeout(time: 60, unit: 'MINUTES') {
                             #mkdir /build-scripts
                             mkdir /output
                             mv ./compile-ossim/ossim-repos/* /work
-                            ls -alh ./compile-ossim/build-scripts/build-joms.sh
-                            echo "cheese" > /build-scripts/test.txt
+                            ls -alhR
                             mv ./compile-ossim/build-scripts/* /build-scripts
                             cd /work
                             /build-scripts/build-ossim.sh
