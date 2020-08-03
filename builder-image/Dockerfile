@@ -40,9 +40,9 @@ COPY tgz /usr/local
 RUN cd usr/local && tar -xzvf alpine-gdal.tgz
 RUN cd usr/local && tar -xzvf alpine-geos.tgz 
 RUN cd usr/local && tar -xzvf alpine-geotiff.tgz 
-RUN mkdir work
-RUN cd usr/local && mv alpine-kakadu.tgz /work
-RUN cd work && tar -xzvf alpine-kakadu.tgz && ls
+RUN mkdir deps
+RUN cd usr/local && mv alpine-kakadu.tgz /deps
+RUN cd /deps && tar -xzvf alpine-kakadu.tgz && ls
 
 
 # USER omar
