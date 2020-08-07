@@ -43,7 +43,7 @@ RUN tar -xzvf alpine-gdal.tgz
 RUN tar -xzvf alpine-geos.tgz 
 RUN tar -xzvf alpine-geotiff.tgz 
 RUN mkdir -p /deps/ossim-private
-RUN mv alpine-kakadu.tgz /deps
+RUN mv alpine-kakadu.tgz /deps/ossim-private
 RUN cd /deps/ossim-private && tar -xzvf alpine-kakadu.tgz
 
 
