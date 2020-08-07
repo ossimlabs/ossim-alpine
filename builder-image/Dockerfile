@@ -36,13 +36,15 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
+
 COPY tgz /usr/local
-RUN cd usr/local && tar -xzvf alpine-gdal.tgz
-RUN cd usr/local && tar -xzvf alpine-geos.tgz 
-RUN cd usr/local && tar -xzvf alpine-geotiff.tgz 
-RUN mkdir deps
-RUN cd usr/local && mv alpine-kakadu.tgz /deps
-RUN cd /deps && tar -xzvf alpine-kakadu.tgz && ls
+WORKDIR /usr/local
+RUN tar -xzvf alpine-gdal.tgz
+RUN tar -xzvf alpine-geos.tgz 
+RUN tar -xzvf alpine-geotiff.tgz 
+RUN mkdir /deps/ossim-private
+RUN mv alpine-kakadu.tgz /deps
+RUN cd /deps && tar -xzvf alpine-kakadu.tgz
 
 
 # USER omar
