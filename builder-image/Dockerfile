@@ -44,7 +44,7 @@ RUN tar -xzvf alpine-geos.tgz
 RUN tar -xzvf alpine-geotiff.tgz 
 RUN mkdir -p /deps/ossim-private
 RUN mv alpine-kakadu.tgz /deps
-#RUN cd /deps && tar -xzvf alpine-kakadu.tgz
+RUN cd /deps/ossim-private && tar -xzvf alpine-kakadu.tgz
 
 
 # USER omar
