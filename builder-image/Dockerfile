@@ -42,7 +42,7 @@ WORKDIR /usr/local
 RUN tar -xzvf alpine-gdal.tgz
 RUN tar -xzvf alpine-geos.tgz 
 RUN tar -xzvf alpine-geotiff.tgz 
-RUN mkdir /deps/ossim-private
+RUN mkdir -p /deps/ossim-private
 RUN mv alpine-kakadu.tgz /deps
 RUN cd /deps && tar -xzvf alpine-kakadu.tgz
 
