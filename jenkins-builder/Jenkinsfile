@@ -66,7 +66,7 @@ podTemplate(
                         curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
                         curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
                         curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geotiff.tgz -O
-                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/centos-kakadu.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-kakadu.tgz -O
                     """
                 }
             }
