@@ -9,7 +9,7 @@ ENV SPRING_CLOUD_CONFIG_ENABLED=false \
     PATH=/usr/local/bin:$PATH \
     HOME=/home/omar 
 
-RUN apk add --update tiff jpeg libpng sqlite-libs libstdc++ curl ffmpeg unzip zip  bash openjdk8 libpthread-stubs\
+RUN apk add --update tiff jpeg libpng sqlite-libs libstdc++ curl ffmpeg unzip zip  bash openjdk8 \
     && rm -rf /var/cache/apk/* \
     && adduser -D -h $HOME -s /sbin/nologin -u 1001 omar \
     && chown 1001:0 -R $HOME 
