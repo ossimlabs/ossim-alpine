@@ -1,4 +1,3 @@
-
 properties([
     parameters ([
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images'),
@@ -95,33 +94,20 @@ podTemplate(
                   TAG_NAME = BRANCH_NAME
                   break
               }
-              
-              DOCKER_IMAGE_PATH = "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/omar-wms"
         }
 
         stage ("Checkout Dependencies Source Code") 
         {       
-            
-            container('git'){
-                dir("builder-image") {
-                    dir("deps/ossim-private"){
-                        git(
-                            url: 'git@github.com:Maxar-Corp/ossim-private.git',
-                            credentialsId: 'ossimlabs-minion-ssh-key',
-                            branch: "master"
-                        )
-                    }
-                    
+            withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
+                dir("builder-image/tgz") {
                     sh """
-                        apk update && apk add bash
-                        ./checkout-scripts/checkout-deps.sh
-                        
-                        cd deps/ossim-private
-                        git checkout "${KAKADU_VERSION}"
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geotiff.tgz -O
+                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-kakadu.tgz -O
                     """
                 }
             }
-            
         }
 
         stage ("Create Builder Image") {
@@ -142,8 +128,8 @@ podTemplate(
             container('docker'){                  
                 withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                     sh """
-                        docker tag ossim-builder-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-minimal-alpine:\$(cat version.txt)
-                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-minimal-alpine:\$(cat version.txt)
+                        docker tag ossim-alpine-builder:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:\$(cat version.txt)
+                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:\$(cat version.txt)
                     """
                 }
             }
