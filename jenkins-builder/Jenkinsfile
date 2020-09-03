@@ -1,3 +1,4 @@
+
 properties([
     parameters ([
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images'),
@@ -42,8 +43,32 @@ podTemplate(
 
         stage("Checkout")
         {
-                checkout(scm)
+            scmVars = checkout(scm)
+
+
+        GIT_BRANCH_NAME = scmVars.GIT_BRANCH
+        BRANCH_NAME = """${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"""
+        
+        // sh """
+        // touch buildVersion.txt
+        // grep buildVersion gradle.properties | cut -d "=" -f2 > "buildVersion.txt"
+        // """
+        
+        preVERSION = readFile "version.txt"
+        VERSION = preVERSION.substring(0, preVERSION.indexOf('\n'))
+
+        GIT_TAG_NAME = "omar-wms" + "-" + VERSION
+        ARTIFACT_NAME = "ArtifactName"
+
+        script {
+          if (BRANCH_NAME != 'master') {
+            buildName "${VERSION} - ${BRANCH_NAME}-SNAPSHOT"
+          } else {
+            buildName "${VERSION} - ${BRANCH_NAME}"
+          }
                 
+        }
+            
         }
 
         stage("Load Variables")
@@ -56,20 +81,47 @@ podTemplate(
             }
 
             load "common-variables.groovy"
+            
+            switch (BRANCH_NAME) {
+                case "master":
+                  TAG_NAME = VERSION
+                  break
+        
+                case "dev":
+                  TAG_NAME = "latest"
+                  break
+        
+                default:
+                  TAG_NAME = BRANCH_NAME
+                  break
+              }
+              
+              DOCKER_IMAGE_PATH = "${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/omar-wms"
         }
 
         stage ("Checkout Dependencies Source Code") 
         {       
-            withCredentials([usernameColonPassword(credentialsId: 'nexusCredentials', variable: 'NEXUS_CREDENTIALS')]){
-                dir("builder-image/tgz") {
+            
+            container('git'){
+                dir("builder-image") {
+                    dir("deps/ossim-private"){
+                        git(
+                            url: 'git@github.com:Maxar-Corp/ossim-private.git',
+                            credentialsId: 'ossimlabs-minion-ssh-key',
+                            branch: "master"
+                        )
+                    }
+                    
                     sh """
-                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-gdal.tgz -O
-                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geos.tgz -O
-                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-geotiff.tgz -O
-                        curl -X GET -u ${NEXUS_CREDENTIALS} https://nexus.ossim.io/repository/ossim-dependencies/alpine-kakadu.tgz -O
+                        apk update && apk add bash
+                        ./checkout-scripts/checkout-deps.sh
+                        
+                        cd deps/ossim-private
+                        git checkout "${KAKADU_VERSION}"
                     """
                 }
             }
+            
         }
 
         stage ("Create Builder Image") {
@@ -90,8 +142,8 @@ podTemplate(
             container('docker'){                  
                 withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                     sh """
-                        docker tag ossim-alpine-builder:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:\$(cat version.txt)
-                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:\$(cat version.txt)
+                        docker tag ossim-builder-minimal-alpine:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-minimal-alpine:\$(cat version.txt)
+                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-builder-minimal-alpine:\$(cat version.txt)
                     """
                 }
             }
