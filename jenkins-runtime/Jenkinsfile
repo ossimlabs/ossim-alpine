@@ -57,8 +57,34 @@ timeout(time: 60, unit: 'MINUTES') {
 
         stage("Checkout")
         {
-            checkout(scm)
+            scmVars = checkout(scm)
+
+
+        GIT_BRANCH_NAME = scmVars.GIT_BRANCH
+        BRANCH_NAME = """${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"""
+        
+        // sh """
+        // touch buildVersion.txt
+        // grep buildVersion gradle.properties | cut -d "=" -f2 > "buildVersion.txt"
+        // """
+        
+        preVERSION = readFile "version.txt"
+        VERSION = preVERSION.substring(0, preVERSION.indexOf('\n'))
+
+        GIT_TAG_NAME = "omar-wms" + "-" + VERSION
+        ARTIFACT_NAME = "ArtifactName"
+
+        script {
+          if (BRANCH_NAME != 'master') {
+            buildName "${VERSION} - ${BRANCH_NAME}-SNAPSHOT"
+          } else {
+            buildName "${VERSION} - ${BRANCH_NAME}"
+          }
+                
         }
+            
+        }
+
 
         stage("Load Variables")
         {
@@ -70,6 +96,20 @@ timeout(time: 60, unit: 'MINUTES') {
             }
 
             load "common-variables.groovy"
+            
+            switch (BRANCH_NAME) {
+                case "master":
+                  TAG_NAME = VERSION
+                  break
+        
+                case "dev":
+                  TAG_NAME = "latest"
+                  break
+        
+                default:
+                  TAG_NAME = BRANCH_NAME
+                  break
+              }
         }
 
         stage ("Checkout Source Code") 
@@ -99,7 +139,7 @@ timeout(time: 60, unit: 'MINUTES') {
                         sh """
                             mkdir /output
                             mv ./compile-ossim/ossim-repos/* /work
-                            mv ./compile-ossim/build-scripts /
+                            mv ./compile-ossim/build-scripts/* /build-scripts
                             cd /work
                             /build-scripts/build-ossim.sh
                             mv /output/ ${WORKSPACE}/compile-ossim/output/
@@ -125,8 +165,8 @@ timeout(time: 60, unit: 'MINUTES') {
             container('docker'){
                 withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
                     sh """
-                        docker tag ossim-alpine-runtime:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:${OSSIM_BRANCH}
-                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:${OSSIM_BRANCH}
+                        docker tag ossim-alpine-runtime:local ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:"${VERSION}"
+                        docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:"${VERSION}"
                     """
                 }
             }
