@@ -36,13 +36,16 @@ RUN ln -s /root/.sdkman/candidates/gradle/current/bin/gradle /usr/bin/gradle && 
     ln -s /root/.sdkman/candidates/groovy/current/bin/groovy /usr/bin/groovy && \
     ln -s /root/.sdkman/candidates/maven/current/bin/mvn /usr/bin/mvn
 
-COPY build-scripts /build-scripts
-COPY deps /deps
-WORKDIR /deps
 
-RUN /build-scripts/build-deps.sh
+COPY tgz /usr/local
+WORKDIR /usr/local
+RUN tar -xzvf alpine-gdal.tgz
+RUN tar -xzvf alpine-geos.tgz 
+RUN tar -xzvf alpine-geotiff.tgz 
+RUN mkdir -p /deps/ossim-private
+RUN mv alpine-kakadu.tgz /deps/ossim-private
+RUN cd /deps/ossim-private && tar -xzvf alpine-kakadu.tgz
 
-RUN yes | rm -r /deps/*/.git
 
 # USER omar
 # WORKDIR /home/omar
@@ -65,4 +68,3 @@ ENV OSSIM_DEV_HOME=/work \
     JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 
 WORKDIR /work
-CMD /build-scripts/build-ossim.sh

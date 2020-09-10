@@ -4,7 +4,6 @@ set -e
 
 export OSSIM_DEV_HOME=/work
 export OSSIM_DEPS_HOME=/deps
-export CMAKE_CXX_FLAGS=-DKDU_NO_THREADS
 
 pushd `dirname ${BASH_SOURCE[0]}` >/dev/null
 # export OSSIM_DEV_HOME=`pwd -P`
