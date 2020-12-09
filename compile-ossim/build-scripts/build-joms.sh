@@ -10,7 +10,7 @@ if [ -z "${GROOVY_HOME}"] ; then
     export GROOVY_HOME=/root/.sdkman/candidates/groovy/current
 fi
 
-ant mvn-install
+ant mvn-deploy
 
 # Hack to fix linking on alpine
 gcc -shared -Wall swig/*.o -o libjoms.so -L$OSSIM_INSTALL_PREFIX/lib64 -lossim -loms
