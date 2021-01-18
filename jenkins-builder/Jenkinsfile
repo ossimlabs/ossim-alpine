@@ -45,7 +45,7 @@ podTemplate(
       GIT_BRANCH_NAME = scmVars.GIT_BRANCH
       BRANCH_NAME = """${sh(returnStdout: true, script: "echo ${GIT_BRANCH_NAME} | awk -F'/' '{print \$2}'").trim()}"""
 
-      VERSION = readFile("version.txt").substring(0, preVERSION.indexOf('\n'))
+      VERSION = readFile("version.txt").trim()
 
       GIT_TAG_NAME = "ossim-alpine" + "-" + VERSION
       ARTIFACT_NAME = "ArtifactName"
