@@ -52,8 +52,10 @@ podTemplate(
 
       script {
         if (BRANCH_NAME == 'master') {
+          TAG_NAME = VERSION
           buildName "${VERSION} - ${BRANCH_NAME}"
         } else {
+          TAG_NAME = BRANCH_NAME + "-" + System.currentTimeMillis()
           buildName "${VERSION} - ${BRANCH_NAME}-SNAPSHOT"
         }
       }
@@ -68,12 +70,6 @@ podTemplate(
       }
 
       load "common-variables.groovy"
-
-      if (BRANCH_NAME == 'master') {
-        TAG_NAME = VERSION
-      } else {
-        TAG_NAME = BRANCH_NAME + "-" + System.currentTimeMillis()
-      }
     }
 
     stage("Checkout Dependencies Source Code") {
@@ -92,11 +88,9 @@ podTemplate(
     stage("Create Builder Image") {
       container('docker') {
         withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
-          dir("builder-image") {
-            sh """
-              docker build --network=host -t ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:${TAG_NAME} ./builder-image
-            """
-          }
+          sh """
+            docker build --network=host -t ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-builder:${TAG_NAME} ../builder-image
+          """
         }
       }
     }
