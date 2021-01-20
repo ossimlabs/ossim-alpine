@@ -120,8 +120,9 @@ timeout(time: 60, unit: 'MINUTES') {
         container('docker') {
           withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_DOWNLOAD_URL}") {
             sh """
+              cd runtime
               ln ../compile-ossim/output/ossim-dist-minimal-alpine.tgz ./
-              docker build -t ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:${TAG_NAME} --network=host ./runtime
+              docker build -t ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:${TAG_NAME} --network=host .
             """
           }
         }
