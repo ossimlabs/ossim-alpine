@@ -1,12 +1,9 @@
 properties([
     parameters([
         string(name: 'DOCKER_REGISTRY_DOWNLOAD_URL', defaultValue: 'nexus-docker-private-group.ossim.io', description: 'Repository of docker images'),
-        string(name: 'KAKADU_VERSION', defaultValue: 'OrchidIsland-2.11.1', description: 'Tag of ossim-private to use for kakadu'),
-        booleanParam(name: 'CLEAN_WORKSPACE', defaultValue: true, description: 'Clean the workspace at the end of the run')
+        string(name: 'KAKADU_VERSION', defaultValue: 'OrchidIsland-2.11.1', description: 'Tag of ossim-private to use for kakadu')
     ]),
-    pipelineTriggers([
-        [$class: "GitHubPushTrigger"]
-    ]),
+    pipelineTriggers([[$class: "GitHubPushTrigger"]]),
     [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/ossim-alpine-minimal.git'],
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
     disableConcurrentBuilds()

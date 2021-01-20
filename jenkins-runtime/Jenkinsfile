@@ -8,9 +8,7 @@ properties([
         string(name: 'OSSIM_DEEPCORE_BRANCH', defaultValue: 'dev', description: 'The branch to use for ossim deepcore'),
         string(name: 'OSSIM_BUILDER_VERSION', defaultValue: '1.2', description: 'The version of the ossim builder to be used')
     ]),
-    pipelineTriggers([
-            [$class: "GitHubPushTrigger"]
-    ]),
+    pipelineTriggers([[$class: "GitHubPushTrigger"]]),
     [$class: 'GithubProjectProperty', displayName: '', projectUrlStr: 'https://github.com/ossimlabs/ossim-alpine-minimal.git'],
     buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '3', daysToKeepStr: '', numToKeepStr: '20')),
     disableConcurrentBuilds()
