@@ -132,7 +132,7 @@ timeout(time: 60, unit: 'MINUTES') {
         container('docker') {
           withDockerRegistry(credentialsId: 'dockerCredentials', url: "https://${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}") {
             sh """
-              docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:${TAG_NAME}"
+              docker push ${DOCKER_REGISTRY_PRIVATE_UPLOAD_URL}/ossim-alpine-runtime:${TAG_NAME}
             """
           }
         }
