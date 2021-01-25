@@ -32,7 +32,7 @@ podTemplate(
       privileged: true
     ),
     containerTemplate(
-      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-alpine-builder:${OSSIM_BUILDER_VERSION}",
+      image: "${DOCKER_REGISTRY_DOWNLOAD_URL}/ossim-alpine-builder:jdk11-1611583830077",
       name: 'builder',
       command: 'cat',
       ttyEnabled: true,
